@@ -9,6 +9,9 @@
 #include <string>
 #include <array>
 
+#include <HTTPRequest.hpp>
+#include <HTTPClient.hpp>
+
 using namespace std;
 
 class exited : public exception {};
@@ -32,23 +35,31 @@ int open_connection(const char *host_ip, int portno, int ip_type, int socket_typ
     return sockfd;
 }
 
-void get_console_input() {
+void get_console_input(int sockfd) {
     string command;
     cin >> command;
 
     if (command == "exit") {
         throw exited();
+    } else {
+        auto *req = new HTTPRequest("GET", "/");
+
+        HTTPClient::sendToServer(sockfd, req);
+        string response = HTTPClient::recvFromServer(sockfd);
+        cout << response << endl;
+
+        delete req;
     }
 
 }
 
-void check_polls(array<pollfd, 2> poll_fds) {
+void check_polls(array<pollfd, 2> poll_fds, int sockfd) {
     for (auto pfd: poll_fds) {
         if (!(pfd.revents & POLLIN))
             continue;
 
         if (pfd.fd == STDIN_FILENO) {
-            get_console_input();
+            get_console_input(sockfd);
         } else {
 
         }
@@ -74,7 +85,7 @@ int main() {
             throw system_error(errno, generic_category(), "poll()");
 
         try {
-            check_polls(poll_fds);
+            check_polls(poll_fds, sockfd);
         } catch (exited &e) {
             break;
         }
