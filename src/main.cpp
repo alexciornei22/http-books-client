@@ -9,24 +9,22 @@
 #include <string>
 #include <array>
 
-#include <HTTPRequest.hpp>
-#include <HTTPClient.hpp>
+#include <ConsoleCommands.hpp>
+#include <SessionData.hpp>
 
 using namespace std;
 
-class exited : public exception {};
-
-int open_connection(const char *host_ip, int portno, int ip_type, int socket_type, int flag)
+int open_connection()
 {
     sockaddr_in serv_addr = sockaddr_in();
-    int sockfd = socket(ip_type, socket_type, flag);
+    int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
         throw system_error(errno, generic_category(), "socket()");
 
     memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = ip_type;
-    serv_addr.sin_port = htons(portno);
-    inet_aton(host_ip, &serv_addr.sin_addr);
+    serv_addr.sin_family = AF_INET;
+    serv_addr.sin_port = htons(SessionData::port);
+    inet_aton(SessionData::server_ip.c_str(), &serv_addr.sin_addr);
 
     /* connect the socket */
     if (connect(sockfd, (sockaddr*) &serv_addr, sizeof(serv_addr)) < 0)
@@ -35,43 +33,39 @@ int open_connection(const char *host_ip, int portno, int ip_type, int socket_typ
     return sockfd;
 }
 
-void get_console_input(int sockfd) {
-    string command;
-    cin >> command;
+void get_console_input() {
+    string command_string;
+    cin >> command_string;
 
-    if (command == "exit") {
-        throw exited();
-    } else {
-        auto *req = new HTTPRequest("GET", "/");
+    ConsoleCommand* command = CommandFactory::getCommand(command_string);
+    command->execute();
 
-        HTTPClient::sendToServer(sockfd, req);
-        string response = HTTPClient::recvFromServer(sockfd);
-        cout << response;
-
-        delete req;
-    }
-
+    delete command;
 }
 
-void check_polls(array<pollfd, 2> poll_fds, int sockfd) {
+void check_polls(array<pollfd, 2> poll_fds) {
     for (auto pfd: poll_fds) {
         if (!(pfd.revents & POLLIN))
             continue;
 
         if (pfd.fd == STDIN_FILENO) {
-            get_console_input(sockfd);
+            get_console_input();
         } else {
+            SessionData* data = SessionData::getInstance();
+            close(data->getSockfd());
 
+            int new_sockfd = open_connection();
+            data->setSockfd(new_sockfd);
+            cout << "reopened conn" << endl;
         }
     }
 }
 
 int main() {
-    // server data
-    const string ip = "34.254.242.81";
-    const int port = 8080;
+    SessionData* data = SessionData::getInstance();
 
-    int sockfd = open_connection(ip.c_str(), port, AF_INET, SOCK_STREAM, 0);
+    int sockfd = open_connection();
+    data->setSockfd(sockfd);
 
     array<pollfd, 2> poll_fds = {
             pollfd{STDIN_FILENO, POLLIN, 0},
@@ -85,7 +79,7 @@ int main() {
             throw system_error(errno, generic_category(), "poll()");
 
         try {
-            check_polls(poll_fds, sockfd);
+            check_polls(poll_fds);
         } catch (exited &e) {
             break;
         }
