@@ -13,8 +13,8 @@ const string HTTPClient::HEADER_TERMINATOR = "\r\n\r\n";
 const size_t HTTPClient::BUFFER_SIZE = 1024;
 
 HTTPResponse* HTTPClient::sendToServer(HTTPRequest *request) {
-    SessionData* data = SessionData::getInstance();
-    int sockfd = data->getSockfd();
+    SessionData& data = SessionData::getInstance();
+    int sockfd = data.getSockfd();
 
     ssize_t bytes, sent = 0;
     string message = request->serializeToString();
@@ -33,8 +33,8 @@ HTTPResponse* HTTPClient::sendToServer(HTTPRequest *request) {
 }
 
 HTTPResponse* HTTPClient::recvFromServer() {
-    SessionData* data = SessionData::getInstance();
-    int sockfd = data->getSockfd();
+    SessionData& data = SessionData::getInstance();
+    int sockfd = data.getSockfd();
 
     char buffer[BUFFER_SIZE];
     size_t bytes_read = 0;

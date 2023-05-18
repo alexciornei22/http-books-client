@@ -24,10 +24,6 @@ public:
     static ConsoleCommand* getCommand(const std::string& command);
 };
 
-class ExitCommand : public ConsoleCommand {
-    void execute() override;
-};
-
 class RegisterCommand : public ConsoleCommand {
 public:
     void execute() override;

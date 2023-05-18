@@ -51,21 +51,21 @@ void check_polls(array<pollfd, 2> poll_fds) {
         if (pfd.fd == STDIN_FILENO) {
             get_console_input();
         } else {
-            SessionData* data = SessionData::getInstance();
-            close(data->getSockfd());
+            SessionData& data = SessionData::getInstance();
+            close(data.getSockfd());
 
             int new_sockfd = open_connection();
-            data->setSockfd(new_sockfd);
+            data.setSockfd(new_sockfd);
             cout << "reopened conn" << endl;
         }
     }
 }
 
 int main() {
-    SessionData* data = SessionData::getInstance();
+    SessionData& data = SessionData::getInstance();
 
     int sockfd = open_connection();
-    data->setSockfd(sockfd);
+    data.setSockfd(sockfd);
 
     array<pollfd, 2> poll_fds = {
             pollfd{STDIN_FILENO, POLLIN, 0},

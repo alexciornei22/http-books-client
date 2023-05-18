@@ -9,7 +9,7 @@ const std::string ConsoleCommand::ENDPOINT = "/api/v1/tema/";
 
 ConsoleCommand* CommandFactory::getCommand(const string& command) {
     if (command == "exit")
-        return new ExitCommand();
+        throw exited();
     if (command == "register")
         return new RegisterCommand();
 
@@ -22,10 +22,6 @@ string ConsoleCommand::promptInput(const string& prompt) {
     string input;
     cin >> input;
     return input;
-}
-
-void ExitCommand::execute() {
-    throw exited();
 }
 
 void RegisterCommand::execute() {
@@ -43,6 +39,7 @@ void RegisterCommand::execute() {
     cout << "json dump" << response->getJsonData().dump() << endl;
 
     delete request;
+    delete response;
 }
 
 void InvalidCommand::execute() {

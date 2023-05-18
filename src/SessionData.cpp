@@ -1,12 +1,10 @@
 #include <SessionData.hpp>
 
-SessionData* SessionData::instance = nullptr;
 const std::string SessionData::server_ip = "34.254.242.81";
 const int SessionData::port = 8080;
 
-SessionData *SessionData::getInstance() {
-    if (instance == nullptr)
-        instance = new SessionData();
+SessionData& SessionData::getInstance() {
+    static SessionData instance;
 
     return instance;
 }
