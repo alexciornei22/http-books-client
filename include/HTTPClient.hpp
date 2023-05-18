@@ -11,8 +11,14 @@ public:
 
     static void sendToServer(int sockfd, HTTPRequest* request);
     static std::string recvFromServer(int sockfd);
+
 private:
     static std::string token;
+    static const std::string CONTENT_LENGTH_HEADER;
+    static const size_t BUFFER_SIZE;
+
+    static size_t getContentLength(const std::string& response);
+    static size_t getHeaderLength(const std::string& response);
 };
 
 

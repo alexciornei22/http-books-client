@@ -14,12 +14,14 @@ public:
 
     std::string serializeToString();
 
+    static const std::string LINE_SEPARATOR;
+    static const std::string HEADER_TERMINATOR;
+
 private:
     std::string method;
     std::string path;
     std::vector<std::string> headers;
     std::string token;
-    static const std::string LINE_SEPARATOR;
 };
 
 

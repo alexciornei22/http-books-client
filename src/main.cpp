@@ -46,7 +46,7 @@ void get_console_input(int sockfd) {
 
         HTTPClient::sendToServer(sockfd, req);
         string response = HTTPClient::recvFromServer(sockfd);
-        cout << response << endl;
+        cout << response;
 
         delete req;
     }

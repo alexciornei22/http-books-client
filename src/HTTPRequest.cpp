@@ -3,6 +3,7 @@
 using namespace std;
 
 const string HTTPRequest::LINE_SEPARATOR = "\r\n";
+const string HTTPRequest::HEADER_TERMINATOR = "\r\n\r\n";
 
 void HTTPRequest::setMethod(const string &method) {
     HTTPRequest::method = method;
