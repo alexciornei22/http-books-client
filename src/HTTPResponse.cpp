@@ -28,6 +28,18 @@ HTTPResponse::HTTPResponse(const string& response) {
     getline(stream, status_text);
     status_text.pop_back();
 
+    size_t index = 0;
+    while ((index = response.find(HTTPClient::SET_COOKIE_HEADER, index)) != string::npos) {
+        index += HTTPClient::SET_COOKIE_HEADER.length();
+        string cookie = response.substr(index);
+
+        stringstream cookie_stream(cookie);
+        string key, value;
+        getline(cookie_stream, key, '=');
+        getline(cookie_stream, value, ';');
+        cookies.insert({key, value});
+    }
+
     size_t header_length = HTTPClient::getHeaderLength(response);
     string data = response.substr(header_length);
 
@@ -35,4 +47,8 @@ HTTPResponse::HTTPResponse(const string& response) {
     if (content_length > 0) {
         json_data = json::parse(data);
     }
+}
+
+const unordered_map<std::string, std::string> &HTTPResponse::getCookies() const {
+    return cookies;
 }

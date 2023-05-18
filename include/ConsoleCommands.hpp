@@ -33,6 +33,15 @@ private:
     std::string password;
 };
 
+class LoginCommand : public ConsoleCommand {
+public:
+    void execute() override;
+
+private:
+    std::string username;
+    std::string password;
+};
+
 class InvalidCommand : public ConsoleCommand {
     void execute() override;
 };

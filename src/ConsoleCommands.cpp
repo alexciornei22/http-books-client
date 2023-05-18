@@ -2,6 +2,7 @@
 #include <HTTPRequest.hpp>
 #include <HTTPClient.hpp>
 #include <iostream>
+#include <SessionData.hpp>
 
 using namespace std;
 
@@ -12,6 +13,8 @@ ConsoleCommand* CommandFactory::getCommand(const string& command) {
         throw exited();
     if (command == "register")
         return new RegisterCommand();
+    if (command == "login")
+        return new LoginCommand();
 
     return new InvalidCommand();
 }
@@ -22,6 +25,10 @@ string ConsoleCommand::promptInput(const string& prompt) {
     string input;
     cin >> input;
     return input;
+}
+
+void InvalidCommand::execute() {
+    cout << "Invalid Command!" << endl;
 }
 
 void RegisterCommand::execute() {
@@ -36,12 +43,27 @@ void RegisterCommand::execute() {
 
     HTTPResponse* response = HTTPClient::sendToServer(request);
 
-    cout << "json dump" << response->getJsonData().dump() << endl;
-
     delete request;
     delete response;
 }
 
-void InvalidCommand::execute() {
-    cout << "Invalid Command!" << endl;
+void LoginCommand::execute() {
+    username = promptInput("username");
+    password = promptInput("password");
+    data["password"] = password;
+    data["username"] = username;
+
+    string path = ENDPOINT + "auth/login";
+    auto* request = new HTTPRequest("POST", path);
+    request->setJson(data);
+
+    HTTPResponse* response = HTTPClient::sendToServer(request);
+
+    SessionData& ses = SessionData::getInstance();
+    cout << "cookies" << endl;
+    for (const auto& cookie : ses.getCookies()) {
+        cout << cookie.first << " " << cookie.second << endl;
+    }
+    delete request;
+    delete response;
 }

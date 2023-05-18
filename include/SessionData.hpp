@@ -2,26 +2,26 @@
 #define HTTP_BOOKS_CLIENT_SESSIONDATA_HPP
 
 #include <string>
+#include <unordered_map>
 
 class SessionData {
 public:
-    static SessionData & getInstance();
+    static SessionData& getInstance();
     void setToken(const std::string &token);
-    void setConnectCookie(const std::string &connectCookie);
     void setSockfd(int sockfd);
+
+    const std::string &getToken() const;
+    int getSockfd() const;
+    const std::unordered_map<std::string, std::string> &getCookies() const;
+
+    void insertCookie(const std::string& key, std::string value);
 
     static const std::string server_ip;
     static const int port;
-
-public:
-    const std::string &getToken() const;
-    const std::string &getConnectCookie() const;
-    int getSockfd() const;
-
 private:
     std::string token;
-    std::string connect_cookie;
     int sockfd;
+    std::unordered_map<std::string, std::string> cookies;
 
     SessionData() = default;
     SessionData(const SessionData&) = default;

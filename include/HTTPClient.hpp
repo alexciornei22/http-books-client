@@ -14,6 +14,7 @@ public:
 
     static const std::string CONTENT_LENGTH_HEADER;
     static const std::string CONTENT_TYPE_JSON_HEADER;
+    static const std::string SET_COOKIE_HEADER;
     static const std::string LINE_SEPARATOR;
     static const std::string HEADER_TERMINATOR;
     static const size_t BUFFER_SIZE;
