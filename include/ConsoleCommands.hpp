@@ -2,6 +2,7 @@
 #define HTTP_BOOKS_CLIENT_CONSOLECOMMANDS_HPP
 
 #include <nlohmann/json.hpp>
+#include <HTTPResponse.hpp>
 
 using json = nlohmann::json;
 
@@ -40,6 +41,11 @@ public:
 private:
     std::string username;
     std::string password;
+};
+
+class AccessCommand : public ConsoleCommand {
+public:
+    void execute() override;
 };
 
 class InvalidCommand : public ConsoleCommand {

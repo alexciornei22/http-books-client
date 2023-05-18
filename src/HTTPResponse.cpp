@@ -52,3 +52,8 @@ HTTPResponse::HTTPResponse(const string& response) {
 const unordered_map<std::string, std::string> &HTTPResponse::getCookies() const {
     return cookies;
 }
+
+void HTTPResponse::printStatus() {
+    cout << status_code << " - " << status_text << endl;
+
+}

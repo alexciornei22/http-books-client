@@ -15,6 +15,8 @@ ConsoleCommand* CommandFactory::getCommand(const string& command) {
         return new RegisterCommand();
     if (command == "login")
         return new LoginCommand();
+    if (command == "enter_library")
+        return new AccessCommand();
 
     return new InvalidCommand();
 }
@@ -43,6 +45,14 @@ void RegisterCommand::execute() {
 
     HTTPResponse* response = HTTPClient::sendToServer(request);
 
+    response->printStatus();
+    if (response->getStatusCode() == 201) {
+        cout << "User registered succesfully!" << endl;
+    } else {
+        string error = response->getJsonData()["error"];
+        cout << error << endl;
+    }
+
     delete request;
     delete response;
 }
@@ -59,11 +69,38 @@ void LoginCommand::execute() {
 
     HTTPResponse* response = HTTPClient::sendToServer(request);
 
-    SessionData& ses = SessionData::getInstance();
-    cout << "cookies" << endl;
-    for (const auto& cookie : ses.getCookies()) {
-        cout << cookie.first << " " << cookie.second << endl;
+    response->printStatus();
+    switch (response->getStatusCode()) {
+        case 200:
+            cout << "Logged in, welcome!" << endl;
+            break;
+        case 204:
+            cout << "You are already logged in!" << endl;
+            break;
+        default:
+            string error = response->getJsonData()["error"];
+            cout << error << endl;
+            break;
     }
+
+    delete request;
+    delete response;
+}
+
+void AccessCommand::execute() {
+    string path = ENDPOINT + "library/access";
+    auto* request = new HTTPRequest("GET", path);
+
+    HTTPResponse* response = HTTPClient::sendToServer(request);
+
+    response->printStatus();
+    if (response->getStatusCode() == 200) {
+        cout << "Access granted!" << endl;
+    } else {
+        string error = response->getJsonData()["error"];
+        cout << error << endl;
+    }
+
     delete request;
     delete response;
 }

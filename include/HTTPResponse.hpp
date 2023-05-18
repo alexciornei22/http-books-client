@@ -14,6 +14,8 @@ public:
     const nlohmann::json &getJsonData() const;
     const std::unordered_map<std::string, std::string> &getCookies() const;
 
+    void printStatus();
+
 private:
     std::string protocol_version;
     int status_code = 0;

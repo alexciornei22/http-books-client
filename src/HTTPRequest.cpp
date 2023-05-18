@@ -1,5 +1,6 @@
 #include <HTTPRequest.hpp>
 #include <HTTPClient.hpp>
+#include <SessionData.hpp>
 
 using namespace std;
 
@@ -26,6 +27,16 @@ string HTTPRequest::serializeToString() {
     request += method + " ";
     request += path + " ";
     request += "HTTP/1.1" + HTTPClient::LINE_SEPARATOR;
+
+    SessionData& data = SessionData::getInstance();
+    if (!data.getCookies().empty()) {
+        request += "Cookie: ";
+        for (auto cookie : data.getCookies()) {
+            request += cookie.first + "=" + cookie.second + ";";
+        }
+        request.pop_back(); // remove trailing ";"
+        request += HTTPClient::LINE_SEPARATOR;
+    }
 
     if (!json_data.empty()) {
         content = json_data.dump();
