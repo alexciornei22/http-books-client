@@ -38,6 +38,11 @@ string HTTPRequest::serializeToString() {
         request += HTTPClient::LINE_SEPARATOR;
     }
 
+    if (!data.getToken().empty()) {
+        request += "Authorization: Bearer " + data.getToken();
+        request += HTTPClient::LINE_SEPARATOR;
+    }
+
     if (!json_data.empty()) {
         content = json_data.dump();
 

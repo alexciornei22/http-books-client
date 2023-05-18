@@ -48,6 +48,23 @@ public:
     void execute() override;
 };
 
+class GetBooksCommand : public ConsoleCommand {
+public:
+    void execute() override;
+};
+
+class AddBookCommand : public ConsoleCommand {
+public:
+    void execute() override;
+
+private:
+    std::string title;
+    std::string author;
+    std::string genre;
+    int page_count;
+    std::string publisher;
+};
+
 class InvalidCommand : public ConsoleCommand {
     void execute() override;
 };

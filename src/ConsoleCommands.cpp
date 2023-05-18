@@ -17,6 +17,10 @@ ConsoleCommand* CommandFactory::getCommand(const string& command) {
         return new LoginCommand();
     if (command == "enter_library")
         return new AccessCommand();
+    if (command == "get_books")
+        return new GetBooksCommand();
+    if (command == "add_book")
+        return new AddBookCommand();
 
     return new InvalidCommand();
 }
@@ -96,6 +100,62 @@ void AccessCommand::execute() {
     response->printStatus();
     if (response->getStatusCode() == 200) {
         cout << "Access granted!" << endl;
+
+        SessionData& data = SessionData::getInstance();
+        data.setToken(response->getJsonData()["token"]);
+    } else {
+        string error = response->getJsonData()["error"];
+        cout << error << endl;
+    }
+
+    delete request;
+    delete response;
+}
+
+void GetBooksCommand::execute() {
+    string path = ENDPOINT + "library/books";
+    auto* request = new HTTPRequest("GET", path);
+
+    HTTPResponse* response = HTTPClient::sendToServer(request);
+
+    response->printStatus();
+    switch (response->getStatusCode()) {
+        case 200:
+            cout << response->getJsonData().dump() << endl;
+            break;
+        case 403:
+            cout << "You do not have access to the library!" << endl;
+            break;
+        default:
+            string error = response->getJsonData()["error"];
+            cout << error << endl;
+            break;
+    }
+    delete request;
+    delete response;
+}
+
+void AddBookCommand::execute() {
+    title = promptInput("title");
+    author = promptInput("author");
+    genre = promptInput("genre");
+    page_count = stoi(promptInput("page_count"));
+    publisher = promptInput("publisher");
+    data["title"] = title;
+    data["author"] = author;
+    data["genre"] = genre;
+    data["page_count"] = page_count;
+    data["publisher"] = publisher;
+
+    string path = ENDPOINT + "library/books";
+    auto* request = new HTTPRequest("POST", path);
+    request->setJson(data);
+
+    HTTPResponse* response = HTTPClient::sendToServer(request);
+
+    response->printStatus();
+    if (response->getStatusCode() == 200) {
+        cout << "Book added succesfully!" << endl;
     } else {
         string error = response->getJsonData()["error"];
         cout << error << endl;
