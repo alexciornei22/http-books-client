@@ -1,6 +1,7 @@
 #include <HTTPResponse.hpp>
 #include <HTTPClient.hpp>
 #include <sstream>
+#include <iostream>
 
 using namespace std;
 using json = nlohmann::json;
@@ -30,5 +31,8 @@ HTTPResponse::HTTPResponse(const string& response) {
     size_t header_length = HTTPClient::getHeaderLength(response);
     string data = response.substr(header_length);
 
-    json_data = json::parse(data);
+    size_t content_length = HTTPClient::getContentLength(response);
+    if (content_length > 0) {
+        json_data = json::parse(data);
+    }
 }
