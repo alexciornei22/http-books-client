@@ -15,6 +15,8 @@ public:
     const std::unordered_map<std::string, std::string> &getCookies() const;
 
     void insertCookie(const std::string& key, std::string value);
+    void deleteCookies();
+    void deleteToken();
 
     static const std::string server_ip;
     static const int port;

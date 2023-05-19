@@ -25,6 +25,8 @@ ConsoleCommand* CommandFactory::getCommand(const string& command) {
         return new AddBookCommand();
     if (command == "delete_book")
         return new DeleteBookCommand();
+    if (command == "logout")
+        return new LogoutCommand();
 
     return new InvalidCommand();
 }
@@ -218,6 +220,32 @@ void DeleteBookCommand::execute() {
             break;
         case 404:
             cout << "The book with id: " << id << " was not found!" << endl;
+            break;
+        default:
+            string error = response->getJsonData()["error"];
+            cout << error << endl;
+            break;
+    }
+
+    delete request;
+    delete response;
+}
+
+void LogoutCommand::execute() {
+
+    string path = ENDPOINT + "auth/logout";
+    auto* request = new HTTPRequest("GET", path);
+
+    HTTPResponse* response = HTTPClient::sendToServer(request);
+
+    SessionData& data = SessionData::getInstance();
+    data.deleteCookies();
+    data.deleteToken();
+
+    response->printStatus();
+    switch (response->getStatusCode()) {
+        case 200:
+            cout << "Logged out succesfully!" << endl;
             break;
         default:
             string error = response->getJsonData()["error"];

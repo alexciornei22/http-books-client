@@ -81,6 +81,11 @@ private:
     std::string id;
 };
 
+class LogoutCommand : public ConsoleCommand {
+public:
+    void execute() override;
+};
+
 class InvalidCommand : public ConsoleCommand {
     void execute() override;
 };

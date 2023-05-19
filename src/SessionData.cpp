@@ -34,3 +34,11 @@ void SessionData::insertCookie(const string& key, std::string value) {
 const unordered_map<std::string, std::string> &SessionData::getCookies() const {
     return cookies;
 }
+
+void SessionData::deleteCookies() {
+    cookies.clear();
+}
+
+void SessionData::deleteToken() {
+    token.clear();
+}
