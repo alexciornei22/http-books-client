@@ -35,7 +35,7 @@ string ConsoleCommand::promptInput(const string& prompt) {
     cout << prompt << "=";
 
     string input;
-    cin >> input;
+    getline(cin, input);
     return input;
 }
 
