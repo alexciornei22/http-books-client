@@ -23,6 +23,8 @@ ConsoleCommand* CommandFactory::getCommand(const string& command) {
         return new GetBookCommand();
     if (command == "add_book")
         return new AddBookCommand();
+    if (command == "delete_book")
+        return new DeleteBookCommand();
 
     return new InvalidCommand();
 }
@@ -191,6 +193,36 @@ void AddBookCommand::execute() {
     } else {
         string error = response->getJsonData()["error"];
         cout << error << endl;
+    }
+
+    delete request;
+    delete response;
+}
+
+void DeleteBookCommand::execute() {
+    id = promptInput("id");
+    data["id"] = id;
+
+    string path = ENDPOINT + "library/books/" + id;
+    auto* request = new HTTPRequest("DELETE", path);
+
+    HTTPResponse* response = HTTPClient::sendToServer(request);
+
+    response->printStatus();
+    switch (response->getStatusCode()) {
+        case 200:
+            cout << "Book with id: " << id << " was deleted succesfully!" << endl;
+            break;
+        case 403:
+            cout << "You do not have access to the library!" << endl;
+            break;
+        case 404:
+            cout << "The book with id: " << id << " was not found!" << endl;
+            break;
+        default:
+            string error = response->getJsonData()["error"];
+            cout << error << endl;
+            break;
     }
 
     delete request;

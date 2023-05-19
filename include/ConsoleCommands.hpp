@@ -73,6 +73,14 @@ private:
     std::string publisher;
 };
 
+class DeleteBookCommand : public ConsoleCommand {
+public:
+    void execute() override;
+
+private:
+    std::string id;
+};
+
 class InvalidCommand : public ConsoleCommand {
     void execute() override;
 };
