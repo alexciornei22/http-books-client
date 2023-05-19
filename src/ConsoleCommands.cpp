@@ -39,13 +39,33 @@ string ConsoleCommand::promptInput(const string& prompt) {
     return input;
 }
 
+std::string ConsoleCommand::promptInput(const string &prompt, InputValidator* validator) {
+    cout << prompt << "=";
+
+    string input;
+    getline(cin, input);
+
+    if (!validator->validate(input))
+        throw invalid_input();
+
+    return input;
+}
+
 void InvalidCommand::execute() {
     cout << "Invalid Command!" << endl;
 }
 
 void RegisterCommand::execute() {
-    username = promptInput("username");
-    password = promptInput("password");
+    NoSpacesValidator validator;
+
+    try {
+        username = promptInput("username", &validator);
+        password = promptInput("password");
+    } catch (invalid_input &e) {
+        validator.printErrorMessage();
+        return;
+    }
+
     data["password"] = password;
     data["username"] = username;
 
@@ -68,8 +88,16 @@ void RegisterCommand::execute() {
 }
 
 void LoginCommand::execute() {
-    username = promptInput("username");
-    password = promptInput("password");
+    NoSpacesValidator validator;
+
+    try {
+        username = promptInput("username", &validator);
+        password = promptInput("password");
+    } catch (invalid_input &e) {
+        validator.printErrorMessage();
+        return;
+    }
+
     data["password"] = password;
     data["username"] = username;
 
@@ -142,7 +170,15 @@ void GetBooksCommand::execute() {
 }
 
 void GetBookCommand::execute() {
-    id = promptInput("id");
+    NumberValidator validator;
+
+    try {
+        id = promptInput("id", &validator);
+    } catch (invalid_input &e) {
+        validator.printErrorMessage();
+        return;
+    }
+
     data["id"] = id;
 
     string path = ENDPOINT + "library/books/" + id;
@@ -172,11 +208,19 @@ void GetBookCommand::execute() {
 }
 
 void AddBookCommand::execute() {
-    title = promptInput("title");
-    author = promptInput("author");
-    genre = promptInput("genre");
-    page_count = stoi(promptInput("page_count"));
-    publisher = promptInput("publisher");
+    NumberValidator validator;
+
+    try {
+        title = promptInput("title");
+        author = promptInput("author");
+        genre = promptInput("genre");
+        page_count = stoi(promptInput("page_count", &validator));
+        publisher = promptInput("publisher");
+    } catch (invalid_input &e) {
+        validator.printErrorMessage();
+        return;
+    }
+
     data["title"] = title;
     data["author"] = author;
     data["genre"] = genre;
@@ -202,7 +246,15 @@ void AddBookCommand::execute() {
 }
 
 void DeleteBookCommand::execute() {
-    id = promptInput("id");
+    NumberValidator validator;
+
+    try {
+        id = promptInput("id", &validator);
+    } catch (invalid_input &e) {
+        validator.printErrorMessage();
+        return;
+    }
+
     data["id"] = id;
 
     string path = ENDPOINT + "library/books/" + id;

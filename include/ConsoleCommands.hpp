@@ -3,6 +3,7 @@
 
 #include <nlohmann/json.hpp>
 #include <HTTPResponse.hpp>
+#include <InputValidator.hpp>
 
 using json = nlohmann::json;
 
@@ -15,6 +16,7 @@ public:
 
 protected:
     static std::string promptInput(const std::string& prompt);
+    static std::string promptInput(const std::string& prompt, InputValidator* validator);
 
     static const std::string ENDPOINT;
     json data;
