@@ -53,6 +53,14 @@ public:
     void execute() override;
 };
 
+class GetBookCommand : public ConsoleCommand {
+public:
+    void execute() override;
+
+private:
+    std::string id;
+};
+
 class AddBookCommand : public ConsoleCommand {
 public:
     void execute() override;
