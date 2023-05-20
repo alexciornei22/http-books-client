@@ -13,6 +13,7 @@ int main() {
         try {
             ConsoleCommand *command = CommandFactory::getCommand(command_string);
             command->execute();
+            cout << endl;
 
             delete command;
         } catch (exited &e) {

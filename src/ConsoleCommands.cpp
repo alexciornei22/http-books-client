@@ -155,7 +155,10 @@ void GetBooksCommand::execute() {
     response->printStatus();
     switch (response->getStatusCode()) {
         case 200:
-            cout << response->getJsonData().dump() << endl;
+            for (auto const& book : response->getJsonData()) {
+                cout << "Book id=" << book["id"] << endl;
+                cout << "title=" << book["title"] << endl;
+            }
             break;
         case 403:
             cout << "You do not have access to the library!" << endl;
@@ -185,11 +188,17 @@ void GetBookCommand::execute() {
     auto* request = new HTTPRequest("GET", path);
 
     HTTPResponse* response = HTTPClient::sendToServer(request);
+    json json_response = response->getJsonData();
 
     response->printStatus();
     switch (response->getStatusCode()) {
         case 200:
-            cout << response->getJsonData().dump() << endl;
+            cout << "Book id=" << id << endl;
+            cout << "title=" << json_response["title"] << endl;
+            cout << "author=" << json_response["author"] << endl;
+            cout << "publisher=" << json_response["publihser"] << endl;
+            cout << "genre=" << json_response["genre"] << endl;
+            cout << "page_count=" << json_response["page_count"] << endl;
             break;
         case 403:
             cout << "You do not have access to the library!" << endl;
