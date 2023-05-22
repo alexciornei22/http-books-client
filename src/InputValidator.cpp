@@ -9,7 +9,7 @@ bool InputValidator::validate(const string &input) {
 }
 
 bool NoSpacesValidator::validate(const string &input) {
-    return input.find(' ') == string::npos;
+    return input.find(' ') == string::npos && !input.empty();
 }
 
 void NoSpacesValidator::printErrorMessage() {
@@ -17,7 +17,8 @@ void NoSpacesValidator::printErrorMessage() {
 }
 
 bool NumberValidator::validate(const string &input) {
-    return all_of(input.begin(), input.end(), [](char ch) { return isdigit(ch); });
+    return all_of(input.begin(), input.end(), [](char ch) { return isdigit(ch); })
+           && !input.empty();
 }
 
 void NumberValidator::printErrorMessage() {
