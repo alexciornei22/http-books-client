@@ -1,5 +1,7 @@
 # Books API HTTP Client, C++
 
+CIORNEI ALEXANDRU-ȘTEFAN, 324CD
+
 ## Program flow
 The program loop reads input from the console, using a command factory to initialize
 the right command object to be executed. Based on the command, the program uses the
