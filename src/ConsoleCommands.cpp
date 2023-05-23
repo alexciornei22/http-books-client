@@ -60,7 +60,7 @@ void RegisterCommand::execute() {
 
     try {
         username = promptInput("username", &validator);
-        password = promptInput("password");
+        password = promptInput("password", &validator);
     } catch (invalid_input &e) {
         validator.printErrorMessage();
         return;
@@ -92,7 +92,7 @@ void LoginCommand::execute() {
 
     try {
         username = promptInput("username", &validator);
-        password = promptInput("password");
+        password = promptInput("password", &validator);
     } catch (invalid_input &e) {
         validator.printErrorMessage();
         return;
