@@ -1,4 +1,4 @@
-# Books API HTTP Client, C++
+# Books REST API HTTP Client, C++
 
 CIORNEI ALEXANDRU-ȘTEFAN, 324CD
 
